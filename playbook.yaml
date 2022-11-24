@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+    - name: Ensure apache is latest
+      ansible.builtin.apt:
+          name: httpd
+          state: latest
+
+    - name: Write apache config file
+      ansible.builtin.template:
+        src: /srv/httpd.j2
+        dest: /etc/httpd.conf
+
+    - name: Ensure postgresql is at the latest version
+      ansible.builtin.apt:
+        name: postgresql
+        state: latest
+
+    - name: Ensure that postgresql is started
+      ansible.builtin.service:
+        name: postgresql
+        state: started
