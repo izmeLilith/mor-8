@@ -3,22 +3,13 @@
   become: true
   tasks:
 
-    - name: Ensure apache is latest
-      ansible.builtin.apt:
-          name: httpd
-          state: latest
+    - name: find files bigger than 100 mb
+      find:
+        paths: /
+        file_type: file
+        size: 100m
+        recurse: yes
+      register: output
 
-    - name: Write apache config file
-      ansible.builtin.template:
-        src: /srv/httpd.j2
-        dest: /etc/httpd.conf
-
-    - name: Ensure postgresql is at the latest version
-      ansible.builtin.apt:
-        name: postgresql
-        state: latest
-
-    - name: Ensure that postgresql is started
-      ansible.builtin.service:
-        name: postgresql
-        state: started
+    - debug: var=item.path
+      with_items: "{{ output.files }}"
